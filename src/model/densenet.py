@@ -140,7 +140,7 @@ def densenet121(pretrained=False, **kwargs):
         # to find such keys.
         pattern = re.compile(
             r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
-        state_dict = model_zoo.load_url(model_urls['densenet121'])
+        state_dict = torch.load('densenet121-a639ec97.pth', map_location='cpu')
         for key in list(state_dict.keys()):
             res = pattern.match(key)
             if res:

@@ -50,14 +50,12 @@ unhealthy_count = balanced_sampled_df.shape[0] - healthy_count
 print(f"Healthy: {healthy_count}")
 print(f"Unhealthy: {unhealthy_count}")
 
-all_image_paths = {Path(x).stem: x for x in glob(os.path.join(raw_data_folder, 'rsna*', '*', '*.dcm'))}
+all_image_paths = {Path(x).stem: x for x in glob(os.path.join(raw_data_folder, 'rsna*', '*', '*.png'))}
 
 balanced_sampled_df['path'] = balanced_sampled_df['id'].map(all_image_paths.get)
 
 def convert_dicom_to_png(dicom_path, output_path, target_size=(224, 224)):
     # read dicom
-    dicom_image = pydicom.dcmread(dicom_path)
-    image_array = dicom_image.pixel_array
     image_array = np.interp(image_array, (image_array.min(), image_array.max()), (0, 255))
     image_array = image_array.astype(np.uint8)
     image = Image.fromarray(image_array)

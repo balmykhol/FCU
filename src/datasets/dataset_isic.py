@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import logging
+import os
 
 import albumentations
 from albumentations.pytorch import ToTensorV2
@@ -42,7 +43,7 @@ class ISICDataset(Dataset):
                 albumentations.Resize(height=cfg['dataset']['resize']['height'], width=cfg['dataset']['resize']['width']),
                 albumentations.VerticalFlip(p=0.5),
                 albumentations.HorizontalFlip(p=0.5),
-                albumentations.RandomBrightness(limit=0.2, p=0.75),
+                albumentations.RandomBrightnessContrast(limit=0.2, contrast_limit=0.0, p=0.75),
                 albumentations.OneOf([
                     albumentations.MedianBlur(blur_limit=5),
                     albumentations.GaussianBlur(blur_limit=5),
@@ -81,7 +82,10 @@ class ISICDataset(Dataset):
 
     def __load_imgs__(self, csv_path):
         data = pd.read_csv(csv_path)
-        imgs = data['path'].values
+        # imgs = data['path'].values
+        root_dir = "isic skin lesion dataset/ISIC2018_Task3_Training_Input/ISIC2018_Task3_Training_Input"
+
+        imgs = [os.path.join(root_dir, f"{row[0]}.jpg") for _, row in data.iterrows()]
         # convert label to one-hot
         onehots = []
         for i, row in data.iterrows():

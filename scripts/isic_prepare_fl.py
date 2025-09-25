@@ -19,7 +19,7 @@ filepath = Path(__file__).resolve().parent
 config = yaml.safe_load(open(filepath.joinpath("../configs/isic/scripts_conf.yaml")))
 
 data_folder = config.get("data_folder", "~/data/isic2018")
-raw_data_folder = config.get("raw_data_folder", f"{data_folder}/raw")
+raw_data_folder = config.get("raw_data_folder", f"{data_folder}")
 client_num = config.get("client_num", 6)
 dirichlet_alpha = config.get("dirichlet_alpha", 0.5) 
 random.seed(config.get("seed", 0))
@@ -30,6 +30,7 @@ target_folder = f'{data_folder}/fedmu'
 Path(target_folder).mkdir(parents=True, exist_ok=True)
 
 all_xray_df = pd.read_csv(f'{raw_data_folder}/ISIC2018_Task3_Training_GroundTruth.csv')
+all_xray_df = all_xray_df.sample(n=4000, random_state=0).reset_index(drop=True)
 all_image_paths = {Path(x).stem: x for x in glob(os.path.join(raw_data_folder, 'ISIC*', '*', 'resized', '*.jpg'))}
 
 all_xray_df['path'] = all_xray_df['image'].map(all_image_paths.get)
